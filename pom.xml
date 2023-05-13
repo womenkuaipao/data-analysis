@@ -14,6 +14,7 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<java.version>1.8</java.version>
+		<webmagic.version>0.8.0</webmagic.version>
 	</properties>
 	<parent>
 		<groupId>org.springframework.boot</groupId>
@@ -36,12 +37,12 @@
 		<dependency>
 			<groupId>us.codecraft</groupId>
 			<artifactId>webmagic-core</artifactId>
-			<version>0.7.3</version>
+			<version>${webmagic.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>us.codecraft</groupId>
 			<artifactId>webmagic-extension</artifactId>
-			<version>0.7.3</version>
+			<version>${webmagic.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>us.codecraft</groupId>
@@ -68,16 +69,4 @@
 			<artifactId>lombok</artifactId>
 		</dependency>
 	</dependencies>
-	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<configuration>
-					<source>1.8</source>
-					<target>1.8</target>
-				</configuration>
-			</plugin>
-		</plugins>
-	</build>
 </project>

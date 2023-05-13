@@ -1,14 +1,8 @@
 package dyb.data.crawl.webprocessor;
 
-import java.io.File;
-import java.net.URISyntaxException;
-import java.util.ArrayList;
-import java.util.List;
-
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.assertj.core.util.Arrays;
-
+import org.springframework.util.CollectionUtils;
 import us.codecraft.webmagic.Page;
 import us.codecraft.webmagic.Request;
 import us.codecraft.webmagic.Site;
@@ -21,6 +15,11 @@ import us.codecraft.webmagic.proxy.SimpleProxyProvider;
 import us.codecraft.webmagic.scheduler.PriorityScheduler;
 import us.codecraft.webmagic.selector.Html;
 import us.codecraft.webmagic.selector.Selectable;
+
+import java.io.File;
+import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class BossProcessor implements PageProcessor {
 	private Site site = Site.me().setRetryTimes(3).setSleepTime(100)
