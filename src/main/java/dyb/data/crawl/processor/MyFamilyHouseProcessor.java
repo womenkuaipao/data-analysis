@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
@@ -18,12 +19,10 @@ import us.codecraft.webmagic.processor.PageProcessor;
 import us.codecraft.webmagic.selector.Html;
 import us.codecraft.webmagic.selector.Selectable;
 
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 @Component
+@PropertySource(value="seed-url.properties")
 public class MyFamilyHouseProcessor implements PageProcessor {
     private Logger logger= LoggerFactory.getLogger(MyFamilyHouseProcessor.class);
     private Site site = Site.me().setRetryTimes(3).setSleepTime(1000);
@@ -40,13 +39,20 @@ public class MyFamilyHouseProcessor implements PageProcessor {
     public void process(Page page) {
         Html html=page.getHtml();
         String pageUrl=page.getUrl().get();
+        Optional<LinkInfo> linkInfo = linkInfoRepository.findById(pageUrl);
+        if(linkInfo.isPresent()&&linkInfo.get().getSuccess()){
+            return;
+        }
         //详情页
         if(page.getUrl().regex("https://hz.5i5j.com/zufang/\\d+.html").match()){
             try {
                 int index = pageUrl.lastIndexOf("/");
                 String hash = pageUrl.substring(index + 1).replace(".html", "");
                 boolean exist=houseInfoRepository.existsByHash(hash);
-                if(exist)return;
+                if(exist){
+                    linkInfoRepository.changeLinkStatus(pageUrl);
+                    return;
+                };
                 String title=html.xpath("/html/body/div[5]/div[1]/div[1]/h1/text()").get();
                 String price = html.xpath("/html/body/div[5]/div[2]/div[2]/div[1]/div[1]/div/p/span[1]/text()").get();
                 String areaSize = html.xpath("/html/body/div[5]/div[2]/div[2]/div[1]/div[2]/div[2]/div/p[1]/text()").get();
@@ -86,6 +92,7 @@ public class MyFamilyHouseProcessor implements PageProcessor {
             page.addTargetRequests(links);
             //将url入库存储
             saveLinks(links);
+            linkInfoRepository.changeLinkStatus(pageUrl);
         }
     }
 
