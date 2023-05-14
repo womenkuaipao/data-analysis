@@ -25,7 +25,7 @@ public class HouseInfo {
     @Column(name="nearby")
     private String nearby;
     @Column(name="area_size")
-    private Integer areaSize;
+    private Float areaSize;
     @Column(name="price")
     private Float price;
     @Column(name="create_time")
