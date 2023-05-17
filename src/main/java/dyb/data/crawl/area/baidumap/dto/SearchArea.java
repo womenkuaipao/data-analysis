@@ -1,4 +1,4 @@
-package dyb.data.crawl.baidu_api.dto;
+package dyb.data.crawl.area.baidumap.dto;
 
 import lombok.Data;
 
@@ -14,4 +14,5 @@ public class SearchArea {
     private String overall_rating;
     private String taste_rating;
     private String comment_num;
+    private String uid;
 }

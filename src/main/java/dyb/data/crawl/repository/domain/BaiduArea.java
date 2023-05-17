@@ -10,8 +10,6 @@ import javax.persistence.*;
 public class BaiduArea {
     @Id
     @Column(name="id")
-    @SequenceGenerator(name="generator_baidu_area",sequenceName = "sequence_baidu_area",allocationSize = 1)
-    @GeneratedValue(strategy = GenerationType.AUTO,generator = "generator_baidu_area")
     private String id;
     @Column(name="name")
     private String name;
@@ -39,4 +37,6 @@ public class BaiduArea {
     /** 评论数 **/
     @Column(name="comment_num")
     private String commentNum;
+    @Column(name="query_key")
+    private Integer queryKey;
 }

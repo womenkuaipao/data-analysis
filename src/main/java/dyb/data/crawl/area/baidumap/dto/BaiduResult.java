@@ -1,4 +1,4 @@
-package dyb.data.crawl.baidu_api.dto;
+package dyb.data.crawl.area.baidumap.dto;
 
 import lombok.Data;
 

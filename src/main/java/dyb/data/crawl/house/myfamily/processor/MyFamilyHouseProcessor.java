@@ -1,4 +1,4 @@
-package dyb.data.crawl.processor;
+package dyb.data.crawl.house.myfamily.processor;
 
 import dyb.data.crawl.repository.HouseInfoRepository;
 import dyb.data.crawl.repository.LinkInfoRepository;

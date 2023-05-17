@@ -25,7 +25,7 @@ import org.openqa.selenium.phantomjs.PhantomJSDriver;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.remote.RemoteWebDriver;
 
-class WebDriverPool {
+public class WebDriverPool {
     private Logger logger;
     private static final int DEFAULT_CAPACITY = 5;
     private final int capacity;
