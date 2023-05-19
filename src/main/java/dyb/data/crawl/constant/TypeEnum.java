@@ -1,6 +1,7 @@
 package dyb.data.crawl.constant;
 
 public enum TypeEnum {
+    MY_FAMILY(1),
     BAIDU_AREA(2),
     WOJOB(3);
     private Integer type;

@@ -7,5 +7,5 @@ import org.springframework.data.repository.PagingAndSortingRepository;
 
 public interface ScheduleInfoRepository extends JpaRepository<ScheduleInfo,Integer>
         , PagingAndSortingRepository<ScheduleInfo,Integer>, JpaSpecificationExecutor<ScheduleInfo> {
-    ScheduleInfo findBySearchKeyAndTypeAndCenter(String key,Integer type,String center);
+    ScheduleInfo findBySearchKeyAndDataFromAndCenter(String key,String dataFrom,String center);
 }

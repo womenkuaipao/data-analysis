@@ -7,4 +7,5 @@ import org.springframework.data.repository.PagingAndSortingRepository;
 
 public interface JobInfoRepository extends JpaRepository<JobInfo,String>
         , PagingAndSortingRepository<JobInfo,String>, JpaSpecificationExecutor<JobInfo> {
+
 }

@@ -56,7 +56,7 @@ public class BaiduMapService {
         }
         String body = null;
         try {
-            Thread.sleep(30);
+            Thread.sleep(100);
             body = restTemplate.exchange(url, HttpMethod.GET, null, new ParameterizedTypeReference<String>() {
             }).getBody();
             BaiduResult<SearchArea> searchAreaBaiduResult = JacksonTool.json2Object(body, new TypeReference<BaiduResult<SearchArea>>() {
@@ -73,14 +73,14 @@ public class BaiduMapService {
 
     public void saveDataByQuery(AreaEnum areaQuery, CenterEnum center){
         try {
-            ScheduleInfo scheduleInfo = scheduleInfoRepository.findBySearchKeyAndTypeAndCenter(areaQuery.getName(), TypeEnum.BAIDU_AREA.getType(),center.getCenter());
+            ScheduleInfo scheduleInfo = scheduleInfoRepository.findBySearchKeyAndDataFromAndCenter(areaQuery.getName(), TypeEnum.BAIDU_AREA.name(),center.getCenter());
             if (scheduleInfo == null || !scheduleInfo.getSuccess()) {
                 if (scheduleInfo == null) {
                     scheduleInfo = new ScheduleInfo();
                     scheduleInfo.setSearchKey(areaQuery.getName());
                     scheduleInfo.setCreateTime(new Date());
                     scheduleInfo.setSuccess(false);
-                    scheduleInfo.setType(TypeEnum.BAIDU_AREA.getType());
+                    scheduleInfo.setDataFrom(TypeEnum.BAIDU_AREA.name());
                     scheduleInfo.setCenter(center.getCenter());
                     scheduleInfo = scheduleInfoRepository.save(scheduleInfo);
                 }

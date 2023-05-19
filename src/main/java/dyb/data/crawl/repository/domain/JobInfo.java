@@ -38,8 +38,8 @@ public class JobInfo {
     private String jobType;
     @Column(name="job_tags",columnDefinition = "text")
     private String jobTags;
-    @Column(name="source")
-    private Integer source;
+    @Column(name="data_from")
+    private String dataFrom;
     /** 工作年限 **/
     @Column(name="work_year")
     private String workYear;

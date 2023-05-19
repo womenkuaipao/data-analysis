@@ -1,5 +1,7 @@
 package dyb.data.crawl.house.myfamily.processor;
 
+import dyb.data.crawl.configuration.SeedConfiguration;
+import dyb.data.crawl.constant.TypeEnum;
 import dyb.data.crawl.repository.HouseInfoRepository;
 import dyb.data.crawl.repository.LinkInfoRepository;
 import dyb.data.crawl.repository.domain.HouseInfo;
@@ -25,11 +27,10 @@ import java.util.*;
 @PropertySource(value="seed-url.properties")
 public class MyFamilyHouseProcessor implements PageProcessor {
     private Logger logger= LoggerFactory.getLogger(MyFamilyHouseProcessor.class);
-    private Site site = Site.me().setRetryTimes(3).setSleepTime(1000);
-    public static Integer SITE_TYPE=1;
-    @Value("${my.family.house}")
-    private String siteSeed;
+    private Site site = Site.me().setRetryTimes(3).setSleepTime(10);
 
+    @Autowired
+    private SeedConfiguration seedConfiguration;
     @Autowired
     private HouseInfoRepository houseInfoRepository;
     @Autowired
@@ -66,7 +67,7 @@ public class MyFamilyHouseProcessor implements PageProcessor {
                 houseInfo.setHouseName(community);
                 houseInfo.setZone(zone);
                 houseInfo.setNearby(nearBy);
-                houseInfo.setSource(SITE_TYPE);
+                houseInfo.setDataFrom(TypeEnum.MY_FAMILY.name());
                 houseInfo.setPrice(Float.valueOf(price));
                 houseInfo.setHash(hash);
                 houseInfo.setBuildTime(buildTime);
@@ -128,15 +129,11 @@ public class MyFamilyHouseProcessor implements PageProcessor {
                 LinkInfo linkInfo=new LinkInfo();
                 linkInfo.setUrl(link);
                 linkInfo.setSuccess(false);
-                linkInfo.setType(SITE_TYPE);
+                linkInfo.setDataFrom(TypeEnum.MY_FAMILY.name());
                 linkInfo.setCreateTime(System.currentTimeMillis());
                 linkInfos.add(linkInfo);
             }
             linkInfoRepository.saveAll(linkInfos);
         }
-    }
-
-    public String getSiteSeed() {
-        return siteSeed;
     }
 }

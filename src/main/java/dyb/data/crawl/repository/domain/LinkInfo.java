@@ -9,12 +9,12 @@ import javax.persistence.*;
 @Table(name="link_info")
 public class LinkInfo {
     @Id
-    @Column(name="url")
+    @Column(name="url",columnDefinition = "varchar(5120)")
     private String url;
     @Column(name="success")
     private Boolean success;
-    @Column(name="type")
-    private Integer type;
+    @Column(name="data_from")
+    private String dataFrom;
     @Column(name="create_time")
     private Long createTime;
 }

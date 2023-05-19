@@ -34,8 +34,8 @@ public class HouseInfo {
     private Date buildTime;
     @Column(name="detail",columnDefinition = "text")
     private String detail;
-    @Column(name="source")
-    private Integer source;
+    @Column(name="data_from")
+    private String dataFrom;
     @Column(name="hash")
     private String hash;
 }

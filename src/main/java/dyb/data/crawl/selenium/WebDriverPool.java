@@ -20,6 +20,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.apache.log4j.Logger;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.phantomjs.PhantomJSDriver;
 import org.openqa.selenium.remote.DesiredCapabilities;
@@ -74,6 +75,7 @@ public class WebDriverPool {
         cliArgsCap.add("--ssl-protocol=any");
         cliArgsCap.add("--ignore-ssl-errors=true");
         sCaps.setCapability("phantomjs.cli.args", cliArgsCap);
+//        sCaps.setCapability("debuggerAddress", "localhost:9222");
         sCaps.setCapability("phantomjs.ghostdriver.cli.args", new String[]{"--logLevel=" + (sConfig.getProperty("phantomjs_driver_loglevel") != null ? sConfig.getProperty("phantomjs_driver_loglevel") : "INFO")});
         if (this.isUrl(driver)) {
             sCaps.setBrowserName("phantomjs");
@@ -82,6 +84,10 @@ public class WebDriverPool {
             this.mDriver = new FirefoxDriver(sCaps);
         } else if (driver.equals("chrome")) {
             this.mDriver = new ChromeDriver(sCaps);
+            //自己配置
+//            ChromeOptions option = new ChromeOptions();
+//            option.setExperimentalOption("debuggerAddress", "127.0.0.1:9222");
+//            this.mDriver = new ChromeDriver(option);
         } else if (driver.equals("phantomjs")) {
             this.mDriver = new PhantomJSDriver(sCaps);
         }

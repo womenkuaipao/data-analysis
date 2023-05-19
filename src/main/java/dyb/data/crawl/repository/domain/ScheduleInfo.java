@@ -22,8 +22,8 @@ public class ScheduleInfo {
     private Integer total;
     @Column(name="success")
     private Boolean success;
-    @Column(name="type")
-    private Integer type;
+    @Column(name="data_from")
+    private String dataFrom;
     @Column(name="center")
     private String center;
 }

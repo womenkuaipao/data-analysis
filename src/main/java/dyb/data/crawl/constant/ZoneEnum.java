@@ -30,8 +30,7 @@ public enum ZoneEnum {
         for(ZoneEnum zoneEnum:values){
             if(zoneEnum.equals(this)){
                 findNext=true;
-            }
-            if(findNext){
+            }else if(findNext){
                 return zoneEnum;
             }
         }

@@ -18,6 +18,11 @@ public interface LinkInfoRepository extends JpaRepository<LinkInfo,String>
     @Query(value = "update link_info set success=true where url=?1",nativeQuery = true)
     public void changeLinkStatus(String url);
 
-    @Query(value = "select url from link_info where success=false and type=?1 and create_time>?2",nativeQuery = true)
-    public List<String> getAllFailedLinks(Integer type,Long time);
+    @Query(value = "select url from link_info where success=false and data_from=?1 and create_time>?2",nativeQuery = true)
+    public List<String> getAllFailedLinks(String dataFrom,Long time);
+
+    @Query(value = "select url from link_info where success=false and data_from=?1",nativeQuery = true)
+    public List<String> getAllFailedLinks(String dateFrom);
+
+    Integer countByCreateTimeBetweenAndDataFrom(Long startTime,Long endTime,String dataFrom);
 }
