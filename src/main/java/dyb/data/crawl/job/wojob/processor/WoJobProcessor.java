@@ -34,7 +34,7 @@ import java.util.stream.Collectors;
 @Component
 public class WoJobProcessor  implements PageProcessor {
     private Logger logger= LoggerFactory.getLogger(MyFamilyHouseProcessor.class);
-    private Site site = Site.me().setRetryTimes(3).setSleepTime(3000);
+    private Site site = Site.me().setRetryTimes(3).setSleepTime(6000);
 
     private int pageSize=100;
 
@@ -70,6 +70,7 @@ public class WoJobProcessor  implements PageProcessor {
         String url = page.getUrl().get();
         //访问页面，构建cookie
         if(url.equals(seedConfiguration.getWoJob())){
+            if(1==1)return;
             try {
                 long dateStart = TimeUtil.getDateStart(new Date());
                 long dateEnd = TimeUtil.getDateEnd(new Date());
@@ -85,6 +86,7 @@ public class WoJobProcessor  implements PageProcessor {
             saveLinkInfos(allRequestUrl);
         }else{
             try {
+                Thread.sleep(1000);
                 String content = page.getHtml().get();
                 String json = content.replace(resultPre, "").replace(resultSuf, "");
                 WoJobResult<WoJobResultBody> woJobResult = JacksonTool.json2Object(json, new TypeReference<WoJobResult<WoJobResultBody>>() {
@@ -134,10 +136,10 @@ public class WoJobProcessor  implements PageProcessor {
         }
     }
 
-    @Override
-    public Site getSite() {
-        return site;
-    }
+//    @Override
+//    public Site getSite() {
+//        return site;
+//    }
 
     private void saveLinkInfos(List<String> allLinks){
         List<LinkInfo> domains=new ArrayList<>();

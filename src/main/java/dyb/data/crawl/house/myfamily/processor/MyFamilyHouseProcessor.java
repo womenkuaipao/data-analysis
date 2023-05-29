@@ -27,7 +27,7 @@ import java.util.*;
 @PropertySource(value="seed-url.properties")
 public class MyFamilyHouseProcessor implements PageProcessor {
     private Logger logger= LoggerFactory.getLogger(MyFamilyHouseProcessor.class);
-    private Site site = Site.me().setRetryTimes(3).setSleepTime(10);
+    private Site site = Site.me().setRetryTimes(2).setSleepTime(2000);
 
     @Autowired
     private SeedConfiguration seedConfiguration;
@@ -95,6 +95,11 @@ public class MyFamilyHouseProcessor implements PageProcessor {
             saveLinks(links);
             linkInfoRepository.changeLinkStatus(pageUrl);
         }
+    }
+
+    @Override
+    public Site getSite() {
+        return this.site;
     }
 
     private Date transBuildTime(String content){

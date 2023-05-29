@@ -74,8 +74,11 @@ public class WebDriverPool {
         cliArgsCap.add("--web-security=false");
         cliArgsCap.add("--ssl-protocol=any");
         cliArgsCap.add("--ignore-ssl-errors=true");
+        cliArgsCap.add("--disable-blink-features=AutomationControlled");
+//        cliArgsCap.add("--remote-debugging-port=9527");
+        cliArgsCap.add("--user-data-dir=C:\\Users\\15766\\AppData\\Local\\Google\\Chrome\\User Data");
         sCaps.setCapability("phantomjs.cli.args", cliArgsCap);
-//        sCaps.setCapability("debuggerAddress", "localhost:9222");
+        sCaps.setCapability("debuggerAddress","127.0.0.1:9527");
         sCaps.setCapability("phantomjs.ghostdriver.cli.args", new String[]{"--logLevel=" + (sConfig.getProperty("phantomjs_driver_loglevel") != null ? sConfig.getProperty("phantomjs_driver_loglevel") : "INFO")});
         if (this.isUrl(driver)) {
             sCaps.setBrowserName("phantomjs");
@@ -83,11 +86,12 @@ public class WebDriverPool {
         } else if (driver.equals("firefox")) {
             this.mDriver = new FirefoxDriver(sCaps);
         } else if (driver.equals("chrome")) {
-            this.mDriver = new ChromeDriver(sCaps);
+//            this.mDriver = new ChromeDriver(sCaps);
             //自己配置
-//            ChromeOptions option = new ChromeOptions();
-//            option.setExperimentalOption("debuggerAddress", "127.0.0.1:9222");
-//            this.mDriver = new ChromeDriver(option);
+            ChromeOptions option = new ChromeOptions();
+            option.setExperimentalOption("debuggerAddress", "127.0.0.1:9527");
+            option.addArguments("--disable-blink-features=AutomationControlled");
+            this.mDriver = new ChromeDriver(option);
         } else if (driver.equals("phantomjs")) {
             this.mDriver = new PhantomJSDriver(sCaps);
         }

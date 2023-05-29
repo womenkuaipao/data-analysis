@@ -56,7 +56,7 @@ public class BaiduMapService {
         }
         String body = null;
         try {
-            Thread.sleep(100);
+            Thread.sleep(1000);
             body = restTemplate.exchange(url, HttpMethod.GET, null, new ParameterizedTypeReference<String>() {
             }).getBody();
             BaiduResult<SearchArea> searchAreaBaiduResult = JacksonTool.json2Object(body, new TypeReference<BaiduResult<SearchArea>>() {
