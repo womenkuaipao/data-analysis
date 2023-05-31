@@ -13,4 +13,6 @@ public class SeedConfiguration {
     private String myFamilyHouse;
     @Value("${wo.job.seed}")
     private String woJob;
+    @Value("${wo.job.query.perfix}")
+    private String woJobQueryPerfix;
 }

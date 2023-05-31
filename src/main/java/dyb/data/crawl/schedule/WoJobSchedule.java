@@ -4,6 +4,7 @@ import dyb.data.crawl.configuration.SeedConfiguration;
 import dyb.data.crawl.constant.Constant;
 import dyb.data.crawl.constant.TypeEnum;
 import dyb.data.crawl.job.wojob.processor.WoJobProcessor;
+import dyb.data.crawl.job.wojob.service.WoJobPageService;
 import dyb.data.crawl.repository.LinkInfoRepository;
 import dyb.data.crawl.selenium.SeleniumDownloader;
 import org.slf4j.Logger;
@@ -31,8 +32,11 @@ public class WoJobSchedule {
     private SeedConfiguration seedConfiguration;
     @Autowired
     private WoJobProcessor woJobProcessor;
+    @Autowired
+    private WoJobPageService woJobPageService;
 
-    @Scheduled(initialDelay = 1000,fixedDelay = 3600*1000*24*1)
+    @Deprecated
+//    @Scheduled(initialDelay = 1000,fixedDelay = 3600*1000*24*1)
     public void syncWoJob(){
         if(woJobStart) {
             List<String> allFailedLinks = linkInfoRepository.getAllFailedLinks(TypeEnum.WOJOB.name());
@@ -46,6 +50,15 @@ public class WoJobSchedule {
                     .setDownloader(new SeleniumDownloader(Constant.chromeDriverPath))
                     .thread(1)
                     .run();
+        }
+    }
+
+    @Scheduled(initialDelay = 1000,fixedDelay = 3600*1000*24*1)
+    public void daylyWoJob(){
+        try {
+            woJobPageService.download();
+        }catch (Exception e){
+            logger.error("每日同步wojob失败",e);
         }
     }
 }

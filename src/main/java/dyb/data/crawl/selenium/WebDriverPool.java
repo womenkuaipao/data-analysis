@@ -84,7 +84,7 @@ public class WebDriverPool {
             sCaps.setBrowserName("phantomjs");
             this.mDriver = new RemoteWebDriver(new URL(driver), sCaps);
         } else if (driver.equals("firefox")) {
-            this.mDriver = new FirefoxDriver(sCaps);
+//            this.mDriver = new FirefoxDriver(sCaps);
         } else if (driver.equals("chrome")) {
 //            this.mDriver = new ChromeDriver(sCaps);
             //自己配置

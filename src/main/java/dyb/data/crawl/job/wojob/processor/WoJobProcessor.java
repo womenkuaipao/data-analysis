@@ -6,6 +6,7 @@ import dyb.data.crawl.constant.TypeEnum;
 import dyb.data.crawl.constant.ZoneEnum;
 import dyb.data.crawl.house.myfamily.processor.MyFamilyHouseProcessor;
 import dyb.data.crawl.job.wojob.dto.*;
+import dyb.data.crawl.job.wojob.service.WoJobService;
 import dyb.data.crawl.repository.JobInfoRepository;
 import dyb.data.crawl.repository.JobQueryWordRepository;
 import dyb.data.crawl.repository.LinkInfoRepository;
@@ -32,6 +33,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Component
+@Deprecated
 public class WoJobProcessor  implements PageProcessor {
     private Logger logger= LoggerFactory.getLogger(MyFamilyHouseProcessor.class);
     private Site site = Site.me().setRetryTimes(3).setSleepTime(6000);
@@ -46,6 +48,8 @@ public class WoJobProcessor  implements PageProcessor {
     private JobInfoRepository jobInfoRepository;
     @Autowired
     private JobQueryWordRepository jobQueryWordRepository;
+    @Autowired
+    private WoJobService woJobService;
 
 
     private String resultPre="<html>\n" +
@@ -101,7 +105,7 @@ public class WoJobProcessor  implements PageProcessor {
                         List<JobInfo> jobInfos=new ArrayList<>();
                         for(WoJobInfo woJobInfo:items){
                             try {
-                                JobInfo jobInfo = transJobInfo(woJobInfo);
+                                JobInfo jobInfo = woJobService.transJobInfo(woJobInfo);
                                 jobInfos.add(jobInfo);
                             }catch (Exception e){
                                 logger.error("转换wojob为domain异常",e);
@@ -111,7 +115,7 @@ public class WoJobProcessor  implements PageProcessor {
                     }
                 }
                 //如果是首页，将分页后的url全部处理好并且入库
-                Map<String, String> urlParam = getUrlParam(url);
+                Map<String, String> urlParam = woJobService.getUrlParam(url);
                 if(firstPage(urlParam)){
                     int cycle=(total+pageSize-1)/pageSize;
                     List<String> nextPages=new ArrayList<>();
@@ -176,82 +180,6 @@ public class WoJobProcessor  implements PageProcessor {
         return newUrl;
     }
 
-    private JobInfo transJobInfo(WoJobInfo woJobInfo){
-        JobInfo jobInfo=new JobInfo();
-        jobInfo.setId(woJobInfo.getJobId());
-        jobInfo.setLongitude(StringUtil.string2Float(woJobInfo.getLon()));
-        jobInfo.setLatitude(StringUtil.string2Float(woJobInfo.getLat()));
-        jobInfo.setJobName(woJobInfo.getJobName());
-        jobInfo.setCompanyName(woJobInfo.getCompanyName());
-        jobInfo.setCompanyType(woJobInfo.getCompanyTypeString());
-        jobInfo.setCompanySize(woJobInfo.getCompanySizeString());
-        jobInfo.setProvideSalaryString(woJobInfo.getProvideSalaryString());
-        Pair<Integer, Integer> salaryRange = getSalaryRange(woJobInfo.getProvideSalaryString());
-        jobInfo.setSalaryLow(salaryRange.getFirst());
-        jobInfo.setSalaryUp(salaryRange.getSecond());
-        jobInfo.setJobTags(StringUtils.join(woJobInfo.getJobTags(),","));
-        jobInfo.setDataFrom(TypeEnum.WOJOB.name());
-        jobInfo.setWorkYear(woJobInfo.getWorkYearString());
-        try {
-            Date date=TimeUtil.getDate(woJobInfo.getUpdataDateTime());
-            jobInfo.setUpdateTime(date);
-        } catch (ParseException e) {
-            logger.warn("时间转换失败[{}]",woJobInfo.getUpdataDateTime(),e);
-        }
-        return jobInfo;
-    }
-
-    private Pair<Integer,Integer> getSalaryRange(String provideSalaryString){
-        if(StringUtils.isNotEmpty(provideSalaryString)){
-            try {
-                int index = 0;
-                boolean yearSalary=false;
-                if ((index = provideSalaryString.indexOf("·")) != -1) {
-                    provideSalaryString = provideSalaryString.substring(0, index);
-                }
-                if(provideSalaryString.endsWith("/年")){
-                    yearSalary=true;
-                    provideSalaryString= provideSalaryString.replace("/年","");
-                }
-                String[] split = provideSalaryString.split("-");
-                String secondType = getSalaryDanwei(split[1]);
-                int up = getSalary(secondType,split[1]);
-                String firstType = getSalaryDanwei(split[0]);
-                if (StringUtils.isEmpty(firstType)) {
-                    firstType = secondType;
-                }
-                int low = getSalary(firstType,split[0]);
-                if(yearSalary){
-                    return Pair.of(low/12,up/12);
-                }else {
-                    return Pair.of(low, up);
-                }
-            }catch (Exception e){
-                logger.error("只关注解析正常的薪资,不正常内容为{}",provideSalaryString);
-            }
-        }
-        return Pair.of(-1,-1);
-    }
-
-    private String getSalaryDanwei(String salary){
-        if(salary.contains("千")){
-            return "千";
-        }else if(salary.contains("万")){
-            return "万";
-        }
-        return "";
-    }
-
-    private int getSalary(String danwei,String s){
-        Float valueOf = Float.valueOf(s.replace(danwei, ""));
-        if(danwei.equals("千")){
-            return (int)(valueOf.floatValue()*1000);
-        }else if(danwei.equals("万")){
-            return (int)(valueOf.floatValue()*10000);
-        }
-        return valueOf.intValue();
-    }
-
     private String buildNewUrl(String zoneCode,String keyWord,int pageNo){
         String url="https://we.51job.com/api/job/search-pc?api_key=51job&" +
                 "timestamp="+(System.currentTimeMillis()/1000)+"&keyword="+keyWord+
@@ -271,24 +199,5 @@ public class WoJobProcessor  implements PageProcessor {
             }
         }
         return false;
-    }
-    private Map<String,String> getUrlParam(String url){
-        Map<String,String> params=new HashMap<>();
-        if(StringUtils.isNotEmpty(url)){
-            int index=url.indexOf("?");
-            if(index!=-1){
-                url=url.substring(index+1);
-                String[] keyValues=url.split("&");
-                for(String k:keyValues){
-                    String[] split = k.split("=");
-                    if(split.length==2){
-                        params.put(split[0],split[1]);
-                    }else{
-                        params.put(split[0],null);
-                    }
-                }
-            }
-        }
-        return params;
     }
 }

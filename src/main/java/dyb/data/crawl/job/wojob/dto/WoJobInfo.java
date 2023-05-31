@@ -19,4 +19,5 @@ public class WoJobInfo {
     private String lon;
     private String lat;
     private String termStr;
+    private String keyWord;
 }

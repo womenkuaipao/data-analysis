@@ -38,4 +38,11 @@ public class TimeUtil {
     public static long getDateEnd(Date date) throws ParseException {
         return getDateStart(date)+3600000*24;
     }
+
+    public static Date getTodayStart() throws ParseException {
+        SimpleDateFormat sf=new SimpleDateFormat(yyyyMMdd);
+        String time = sf.format(new Date());
+        Date startDate = sf.parse(time);
+        return startDate;
+    }
 }

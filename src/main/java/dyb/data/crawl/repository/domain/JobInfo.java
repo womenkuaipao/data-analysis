@@ -43,4 +43,8 @@ public class JobInfo {
     /** 工作年限 **/
     @Column(name="work_year")
     private String workYear;
+    @Column(name="key_word")
+    private String keyWord;
+    @Column(name="save_time")
+    private Date saveTime;
 }
