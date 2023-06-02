@@ -18,12 +18,13 @@ public class SeleniumDevTool {
     private String seedUrl=null;
     public SeleniumDevTool(String chromeDriverPath,String seedUrl){
         System.getProperties().setProperty("webdriver.chrome.driver", chromeDriverPath);
-        System.setProperty("webdriver.chrome.bin", "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe");
+//        System.setProperty("webdriver.chrome.bin", "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe");
         this.seedUrl=seedUrl;
     }
 
     public ChromeDriver getDevTool(String filterUrl, BiConsumer<String,String> consumer){
         ChromeOptions chromeOptions=new ChromeOptions();
+        chromeOptions.setExperimentalOption("debuggerAddress", "127.0.0.1:9527");
         chromeOptions.addArguments("--remote-allow-origins=*");
         ChromeDriver driver=new ChromeDriver(chromeOptions);
         driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(1));

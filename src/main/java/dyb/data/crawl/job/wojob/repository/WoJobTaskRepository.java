@@ -11,5 +11,5 @@ import java.util.List;
 public interface WoJobTaskRepository  extends JpaRepository<WoJobTask,Long>
         , PagingAndSortingRepository<WoJobTask,Long>, JpaSpecificationExecutor<WoJobTask> {
     List<WoJobTask> findByCreateTime(Date time);
-    List<WoJobTask> findByQueryKeyAndAreaAndCreateTime(String key,String areaName,Date time);
+    List<WoJobTask> findByQueryKeyAndAreaAndCreateTimeAfter(String key,String areaName,Date time);
 }

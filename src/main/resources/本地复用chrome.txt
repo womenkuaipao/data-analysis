@@ -1,1 +1,1 @@
-chrome.exe --remote-debugging-port=9527 --user-data-dir="C:\Users\15766\AppData\Local\Google\Chrome\User Data"
+chrome.exe --remote-debugging-port=9527 --user-data-dir="C:\Users\15766\AppData\Local\Google\Chrome\User Data" --remote-allow-origins=*

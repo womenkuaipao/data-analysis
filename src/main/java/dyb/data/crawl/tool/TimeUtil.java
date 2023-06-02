@@ -8,6 +8,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.concurrent.TimeUnit;
 
 public class TimeUtil {
     private static Logger logger= LoggerFactory.getLogger(TimeUtil.class);
@@ -44,5 +45,12 @@ public class TimeUtil {
         String time = sf.format(new Date());
         Date startDate = sf.parse(time);
         return startDate;
+    }
+
+    public static Date getDateBefore(Date date,int dayCount){
+        Calendar calendar=Calendar.getInstance();
+        calendar.setTime(date);
+        calendar.add(Calendar.DATE,-dayCount);
+        return calendar.getTime();
     }
 }

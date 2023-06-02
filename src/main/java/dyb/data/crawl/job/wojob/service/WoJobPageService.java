@@ -31,6 +31,7 @@ import java.net.URLDecoder;
 import java.text.ParseException;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.Supplier;
 
 @Service
 public class WoJobPageService {
@@ -57,7 +58,7 @@ public class WoJobPageService {
         chooseCity(driver);
         choosePublishTime(driver);
         List<WebElement> allArea = getAllArea(driver);
-        Date todayStart = TimeUtil.getTodayStart();
+        Date weekAgo = TimeUtil.getDateBefore(new Date(),7);
         List<JobQueryWord> keyWords = jobQueryWordRepository.findAll();
         //循环----关键字
         for(JobQueryWord jobQueryWord:keyWords){
@@ -68,7 +69,7 @@ public class WoJobPageService {
                 String areaName = areaElement.getText();
                 if("热门地区".equals(areaName))continue;
                 //判断今天是否执行过该查询
-                List<WoJobTask> todayTasks = woJobTaskRepository.findByQueryKeyAndAreaAndCreateTime(jobQueryWord.getKeyWord(), areaName, todayStart);
+                List<WoJobTask> todayTasks = woJobTaskRepository.findByQueryKeyAndAreaAndCreateTimeAfter(jobQueryWord.getKeyWord(), areaName, weekAgo);
                 if(CollectionUtils.isEmpty(todayTasks)){
                     chooseArea(driver,areaElement);
                     chooseQuery(driver);
@@ -85,8 +86,9 @@ public class WoJobPageService {
                                 domain.setArea(areaName);
                                 domain.setQueryKey(jobQueryWord.getKeyWord());
                                 domain.setSuccess(true);
-                                domain.setCreateTime(todayStart);
+                                domain.setCreateTime(new Date());
                                 woJobTaskRepository.save(domain);
+                                TimerTool.resetTimer();
                                 break;
                             }
                             TimerTool.resetTimer();
@@ -136,21 +138,29 @@ public class WoJobPageService {
     }
 
     public void inputKeyWord(ChromeDriver driver,String keyWord){
-        driver.findElement(By.id("keywordInput")).sendKeys(keyWord);
-        sleep(5000);
+        quiteClick(()->{
+            String inputKey=null;
+            while(!keyWord.equals(inputKey)) {
+                driver.findElement(By.id("keywordInput")).clear();
+                sleep(1000);
+                driver.findElement(By.id("keywordInput")).sendKeys(keyWord);
+                sleep(2000);
+                inputKey =driver.findElement(By.id("keywordInput")).getAttribute("value");
+            }
+        });
     }
 
     public void chooseCity(ChromeDriver driver){
-        driver.findElement(By.className("allcity")).click();
+        quiteClick(()->driver.findElement(By.className("allcity")).click());
         sleep(1000);
-        driver.findElement(By.xpath("//*[@id=\"pane-0\"]/div/div/div[7]/span")).click();
+        quiteClick(()->driver.findElement(By.xpath("//*[@id=\"pane-0\"]/div/div/div[7]/span")).click());
         sleep(1000);
-        driver.findElement(By.xpath("//*[@id=\"dilog\"]/div/div[3]/span/button")).click();
+        quiteClick(()->driver.findElement(By.xpath("//*[@id=\"dilog\"]/div/div[3]/span/button")).click());
         sleep(1000);
     }
 
     public void chooseQuery(ChromeDriver driver){
-        driver.findElement(By.xpath("//*[@id=\"search_btn\"]")).click();
+        quiteClick(()->driver.findElement(By.xpath("//*[@id=\"search_btn\"]")).click());
     }
 
     /**
@@ -161,7 +171,7 @@ public class WoJobPageService {
     public boolean enableNextPage(ChromeDriver driver) {
         try {
             sleep(4000);
-            WebElement element = driver.findElement(By.xpath("//*[@id=\"app\"]/div/div[2]/div/div/div[2]/div/div[2]/div/div[3]/div/div/div/button[2]"));
+            WebElement element = quiteGetDom(()->driver.findElement(By.xpath("//*[@id=\"app\"]/div/div[2]/div/div/div[2]/div/div[2]/div/div[3]/div/div/div/button[2]")));
             String disabled = element.getDomProperty("disabled");
             if(StringUtils.isNotEmpty(disabled)&&("true".equals(disabled)||"disabled".equals(disabled))){
                 return false;
@@ -173,7 +183,7 @@ public class WoJobPageService {
     }
 
     public void chooseNextPage(ChromeDriver driver){
-        driver.findElement(By.xpath("//*[@id=\"app\"]/div/div[2]/div/div/div[2]/div/div[2]/div/div[3]/div/div/div/button[2]/i")).click();
+        quiteClick(()->driver.findElement(By.xpath("//*[@id=\"app\"]/div/div[2]/div/div/div[2]/div/div[2]/div/div[3]/div/div/div/button[2]/i")).click());
     }
 
     /**
@@ -181,12 +191,13 @@ public class WoJobPageService {
      * @param driver
      */
     public void clickPage(ChromeDriver driver){
-        driver.findElement(By.xpath("/html/body")).click();
+        driver.switchTo().defaultContent();
+        quiteClick(()->driver.findElement(By.xpath("//*[@id=\"app\"]/div/div[1]/div[2]/div/img")).click());
     }
 
     public List<WebElement> getAllArea(ChromeDriver driver){
         if(CollectionUtils.isEmpty(areaElement)){
-            WebElement element = driver.findElement(By.xpath("//*[@id=\"app\"]/div/div[2]/div/div/div[1]/div[2]/div[1]/div[2]/div/div[2]/div[1]"));
+            WebElement element = quiteGetDom(()->driver.findElement(By.xpath("//*[@id=\"app\"]/div/div[2]/div/div/div[1]/div[2]/div[1]/div[2]/div/div[2]/div[1]")));
             List<WebElement> areas = element.findElements(By.className("ch"));
             if(CollectionUtils.isNotEmpty(areas)){
                 areaElement.addAll(areas);
@@ -196,16 +207,16 @@ public class WoJobPageService {
     }
 
     public void chooseArea(ChromeDriver driver,WebElement currentArea){
-        sleep(1000);
-        currentArea.click();
+        sleep(2000);
+        quiteClick(()->currentArea.click());
     }
 
     public void choosePublishTime(ChromeDriver driver){
-        driver.findElement(By.xpath("//*[@id=\"app\"]/div/div[2]/div/div/div[1]/div[2]/div[4]/span")).click();
+        quiteClick(()->driver.findElement(By.xpath("//*[@id=\"app\"]/div/div[2]/div/div/div[1]/div[2]/div[4]/span")).click());
         sleep(5000);
-        driver.findElement(By.xpath("//*[@id=\"app\"]/div/div[2]/div/div/div[1]/div[2]/div[3]/div[5]/div/div[2]/div[1]/div[2]/p")).click();
+        quiteClick(()->driver.findElement(By.xpath("//*[@id=\"app\"]/div/div[2]/div/div/div[1]/div[2]/div[3]/div[5]/div/div[2]/div[1]/div[2]/p")).click());
         sleep(5000);
-        driver.findElement(By.xpath("//*[@id=\"app\"]/div/div[2]/div/div/div[1]/div[2]/div[3]/div[5]/div[2]/p[4]/a")).click();
+        quiteClick(()->driver.findElement(By.xpath("//*[@id=\"app\"]/div/div[2]/div/div/div[1]/div[2]/div[3]/div[5]/div[2]/p[4]/a")).click());
 
     }
 
@@ -215,5 +226,39 @@ public class WoJobPageService {
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private void quiteClick(FunctionInvoke function){
+        try{
+            function.doMethod();
+        }catch (Exception e){
+            logger.error("页面未加载到元素等待重试",e);
+            sleep(10000);
+            try {
+                function.doMethod();
+            }catch (Exception e1){
+                logger.error("二次重试仍未成功",e1);
+            }
+        }
+    }
+
+    private WebElement quiteGetDom(Supplier<WebElement> supplier){
+        try{
+            return supplier.get();
+        }catch (Exception e){
+            logger.error("页面未加载到元素等待重试",e);
+            sleep(10000);
+            try {
+                return supplier.get();
+            }catch (Exception e1){
+                logger.error("二次重试仍未成功",e1);
+                throw e1;
+            }
+        }
+    }
+
+    @FunctionalInterface
+    public interface FunctionInvoke{
+        public void doMethod();
     }
 }
